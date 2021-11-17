@@ -35,7 +35,7 @@ object_type:
     name: questions
     storage: mysql
     deletion: directly_only
-    id: q
+    id: lec_q_id
     edge_types: []
       # - name: question_to_answer
       #   to:

@@ -1,0 +1,44 @@
+object_type:
+  name: users
+  storage: mysql
+  deletion: directly_only
+  id: email
+  edge_types: []
+    # - name: user_to_answer
+    #   to:
+    #     object_type: answers
+    #     field: userToAnswerId
+    #   deletion: deep
+---
+  object_type:
+    name: answers
+    storage: mysql
+    deletion: by_x_only
+    x:
+      - users
+    id: email
+    edge_types: []
+---
+  object_type:
+    name: lectures
+    storage: mysql
+    deletion: not_deleted
+    id: id
+    edge_types: []
+      # - name: lecture_to_question
+      #   to:
+      #     object_type: questions
+      #     field: lectureToQuestionId
+      #   deletion: deep
+---
+  object_type:
+    name: questions
+    storage: mysql
+    deletion: directly_only
+    id: q
+    edge_types: []
+      # - name: question_to_answer
+      #   to:
+      #     object_type: answers
+      #     field: questionToAnswerId
+      #   deletion: deep

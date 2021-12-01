@@ -3,38 +3,41 @@ object_type:
   storage: mysql
   deletion: directly_only
   id: email
-  edge_types: []
-    # - name: user_to_answer
-    #   to:
-    #     object_type: answers
-    #     field: userToAnswerId
-    #   deletion: deep
+  id_type: string
+  edge_types:
+     - name: waddup
+       to:
+         object_type: answers
+         field: email
+       deletion: deep
 ---
   object_type:
     name: answers
     storage: mysql
-    deletion: by_x_only
-    x:
-      - users
+    deletion: directly_only
+#    x:
+#      - users
     id: email
     edge_types: []
 ---
   object_type:
     name: lectures
     storage: mysql
-    deletion: not_deleted
+    deletion: directly_only
     id: id
     edge_types: []
-      # - name: lecture_to_question
-      #   to:
-      #     object_type: questions
-      #     field: lectureToQuestionId
-      #   deletion: deep
+#       - name: waddup
+#         to:
+#           object_type: questions
+#           field: lec
+#         deletion: deep
 ---
   object_type:
     name: questions
     storage: mysql
     deletion: directly_only
+#    x:
+#     - lectures
     id: lec_q_id
     edge_types: []
       # - name: question_to_answer
@@ -42,3 +45,49 @@ object_type:
       #     object_type: answers
       #     field: questionToAnswerId
       #   deletion: deep
+---
+object_type:
+    name: lectures_test
+    storage: mysql
+    deletion: directly_only
+    id: id
+#    id_type: string
+    edge_types:
+       - name: lectToQuestion
+         to:
+           object_type: questions_test
+           field: lec_id
+         deletion: deep
+---
+object_type:
+    name: questions_test
+    storage: mysql
+    deletion: by_x_only
+    x:
+     - lectToQuestion
+    id: q_id
+    edge_types:
+       - name: questionToLec
+         to:
+           object_type: lectures_test
+           field: id
+         deletion: deep
+       - name: questionToAnswers
+         to:
+           object_type: answers_test
+           field: q_id
+         deletion: deep
+---
+object_type:
+    name: answers_test
+    storage: mysql
+    deletion: by_x_only
+    x:
+     - questionToAnswers
+    id: q_id
+    edge_types:
+       - name: answersToQuestion
+         to:
+           object_type: questions_test
+           field: q_id
+         deletion: deep

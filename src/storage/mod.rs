@@ -35,6 +35,7 @@ pub trait DelfStorageConnection: Debug {
     fn delete_edge(
         &self,
         to: &DelfObject,
+        from_id_type: &String,
         from_id: &String,
         to_id: Option<&String>,
         edge: &DelfEdge,

@@ -39,6 +39,8 @@ pub struct DelfEdge {
     pub name: String,
     /// Describes the object the edge points to.
     pub to: ToType,
+    /// Describes the id type of the object the edge points from.
+    pub from_id_type: String,
     /// How should the deletion of this edge affect the object it points to.
     pub deletion: DeleteType,
     /// If this edge is deleted (typically, shallowly), is there an inverse edge that also needs to be deleted.
@@ -52,6 +54,7 @@ impl From<&Yaml> for DelfEdge {
         DelfEdge {
             name: String::from(obj["name"].as_str().unwrap()),
             to: ToType::from(&obj["to"]),
+            from_id_type: String::from(obj["from_id_type"].as_str().unwrap()),
             deletion: DeleteType::from(obj["deletion"].as_str().unwrap()),
             inverse: match obj["inverse"].as_str() {
                 Some(edge_name) => Some(String::from(edge_name)),
@@ -104,7 +107,7 @@ impl DelfEdge {
             DeleteType::Shallow => (),
         }
 
-        let deleted = s.delete_edge(to_obj, from_id, None, self);
+        let deleted = s.delete_edge(to_obj, &self.from_id_type, from_id, None, self);
 
         if deleted {
             println!("Edge deleted: {:#?}", self.name);
@@ -198,7 +201,7 @@ impl DelfEdge {
             None => (),
         }
 
-        if s.delete_edge(to_obj, from_id, None, self) {
+        if s.delete_edge(to_obj, &self.from_id_type, from_id, None, self) {
             println!("Edges Deleted: {:#?}", self.name);
         }
     }

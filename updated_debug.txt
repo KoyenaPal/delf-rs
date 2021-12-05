@@ -53,6 +53,7 @@ CREATE TABLE `answers_test` (
   `answer_id` int NOT NULL,
   `lec_id` int DEFAULT NULL,
   `q_id` int DEFAULT NULL,
+  `u_email` text,
   `answer` text,
   PRIMARY KEY (`answer_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -64,7 +65,7 @@ CREATE TABLE `answers_test` (
 
 LOCK TABLES `answers_test` WRITE;
 /*!40000 ALTER TABLE `answers_test` DISABLE KEYS */;
-INSERT INTO `answers_test` VALUES (1001,1,1001,'answer 1'),(1002,1,1002,'answer 2'),(1003,1,1003,'answer 3'),(2003,2,2003,'answer 3');
+INSERT INTO `answers_test` VALUES (1001,1,1001,'koyena_pal@brown.edu', 'answer 1'),(1002,1,1002,'koyena_pal@brown.edu','answer 2'),(1003,1,1003,'koyena_pal@brown.edu','answer 3'),(2003,2,2003,'kate_nelson@brown.edu','answer 3');
 /*!40000 ALTER TABLE `answers_test` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -154,6 +155,18 @@ LOCK TABLES `questions` WRITE;
 INSERT INTO `questions` VALUES (0,1,'answer question','1-1'),(0,2,'again answer question','1-2'),(0,3,'Ask something here.','1-3'),(2,1,'Ask something here.','2-1'),(2,2,'Ask something here.2','2-2'),(2,3,'Ask something here3.','2-3'),(3,1,'Ask something here.','3-1'),(3,2,'Ask something here.2','3-2'),(3,4,'Ask something here.4','3-4'),(4,2,'Ask something here.2','4-2'),(4,5,'Ask something here.5','4-5'),(5,3,'Ask something here.3','5-3'),(5,4,'Ask something here.4','5-4');
 /*!40000 ALTER TABLE `questions` ENABLE KEYS */;
 UNLOCK TABLES;
+
+
+--
+-- Dumping data for table `users_test`
+--
+DROP TABLE IF EXISTS `users_test`;
+
+CREATE TABLE `users_test` (
+	`email` varchar(50) PRIMARY KEY,
+     `name` text);
+
+INSERT INTO users_test VALUES ('koyena_pal@brown.edu', 'Koyena'),('kate_nelson@brown.edu', 'Kate');
 
 --
 -- Table structure for table `questions_test`

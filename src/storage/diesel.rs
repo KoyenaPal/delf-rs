@@ -127,13 +127,14 @@ impl DelfStorageConnection for DieselConnection {
     fn delete_edge(
         &self,
         to: &DelfObject,
+        from_id_type: &String,
         from_id: &String,
         to_id: Option<&String>,
         edge: &DelfEdge,
     ) -> bool {
         match &edge.to.mapping_table {
             Some(map_table) => self.delete_indirect_edge(edge, to, from_id, to_id, map_table), // delete the id pair from the mapping table
-            None => self.delete_direct_edge(to, from_id, edge), // try to set null in object table
+            None => self.delete_direct_edge(to, from_id_type, from_id, edge), // try to set null in object table
         }
     }
 
@@ -249,9 +250,9 @@ impl DieselConnection {
         }
     }
 
-    fn delete_direct_edge(&self, to: &DelfObject, from_id: &String, edge: &DelfEdge) -> bool {
+    fn delete_direct_edge(&self, to: &DelfObject, from: &String, from_id: &String, edge: &DelfEdge) -> bool {
         let default_value;
-        match to.id_type.to_lowercase().as_str() {
+        match from.to_lowercase().as_str() {
             "string" => default_value = "''",
             "number" => default_value = "0",
             _ => panic!("Unrecognized id type"),
@@ -260,7 +261,11 @@ impl DieselConnection {
             "UPDATE {} SET {} = {} WHERE {} = ",
             to.name, edge.to.field, default_value, edge.to.field
         );
-        self.append_id_to_query(&mut query_str, &to.id_type, from_id);
+        println!("OBJECT:");
+        println!("{:?}", &to);
+        self.append_id_to_query(&mut query_str, from, from_id);
+        println!("QUERY STRING:");
+        println!("{}", query_str);
         let num_rows = diesel::sql_query(query_str)
             .execute(&self.connection)
             .unwrap();

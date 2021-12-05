@@ -4,12 +4,12 @@ object_type:
   deletion: directly_only
   id: email
   id_type: string
-  edge_types:
-     - name: waddup
-       to:
-         object_type: answers
-         field: email
-       deletion: deep
+  edge_types: []
+#     - name: waddup
+#       to:
+#         object_type: answers
+#         field: email
+#       deletion: deep
 ---
   object_type:
     name: answers
@@ -49,11 +49,12 @@ object_type:
 object_type:
     name: lectures_test
     storage: mysql
-    deletion: directly_only
+    deletion: directly
     id: id
 #    id_type: string
     edge_types:
        - name: lectToQuestion
+         from_id_type: number
          to:
            object_type: questions_test
            field: lec_id
@@ -67,12 +68,8 @@ object_type:
      - lectToQuestion
     id: q_id
     edge_types:
-       - name: questionToLec
-         to:
-           object_type: lectures_test
-           field: id
-         deletion: deep
        - name: questionToAnswers
+         from_id_type: number
          to:
            object_type: answers_test
            field: q_id
@@ -84,10 +81,20 @@ object_type:
     deletion: by_x_only
     x:
      - questionToAnswers
+     - userToAnswers
     id: q_id
+    edge_types: []
+---
+object_type:
+    name: users_test
+    storage: mysql
+    deletion: directly_only
+    id: email
+    id_type: string
     edge_types:
-       - name: answersToQuestion
-         to:
-           object_type: questions_test
-           field: q_id
-         deletion: deep
+        - name: userToAnswers
+          from_id_type: string
+          to:
+            object_type: answers_test
+            field: u_email
+          deletion: deep

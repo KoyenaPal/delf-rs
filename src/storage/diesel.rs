@@ -261,11 +261,7 @@ impl DieselConnection {
             "UPDATE {} SET {} = {} WHERE {} = ",
             to.name, edge.to.field, default_value, edge.to.field
         );
-        println!("OBJECT:");
-        println!("{:?}", &to);
         self.append_id_to_query(&mut query_str, from, from_id);
-        println!("QUERY STRING:");
-        println!("{}", query_str);
         let num_rows = diesel::sql_query(query_str)
             .execute(&self.connection)
             .unwrap();

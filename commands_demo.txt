@@ -1,0 +1,58 @@
+STEP 1: 
+	Open 3 tabs: 
+	cd /Users/koyenapal/Desktop/csci2390_final/delf-rs
+	Open schema.yaml
+
+STEP 2:
+	
+
+Checking Users:
+	Tab 1:
+	mysql -u root -p myclass < demo.txt
+	Show related data that will be deleted:
+	mysql -u root -p
+	use myclass;
+	select * from users;
+	select * from answers;
+
+	Show related objects in schema.yaml
+
+	Tab 2:
+	./target/debug/delf -s examples/websubmit-rs/schema.yaml -c examples/websubmit-rs/config.yaml validate
+	./target/debug/delf -s examples/websubmit-rs/schema.yaml -c examples/websubmit-rs/config.yaml run
+
+	Tab 3:
+	curl -X "DELETE" http://localhost:8000/object/users/koyena_pal@brown.edu
+
+	Tab 1:
+	mysql -u root -p
+	use myclass;
+	select * from users;
+	select * from answers;	
+	
+
+Checking Lectures:
+	Tab 1:
+	mysql -u root -p myclass < demo.txt
+	Show related data that will be deleted:
+	mysql -u root -p
+	use myclass;
+	select * from lectures;
+	select * from questions;
+	select * from answers;
+
+	Show related objects in schema.yaml
+
+	Tab 2:
+	./target/debug/delf -s examples/websubmit-rs/schema.yaml -c examples/websubmit-rs/config.yaml validate
+	./target/debug/delf -s examples/websubmit-rs/schema.yaml -c examples/websubmit-rs/config.yaml run
+
+	Tab 3:
+	curl -X "DELETE" http://localhost:8000/object/lectures/1
+
+	Tab 1:
+	mysql -u root -p
+	use myclass;
+	select * from lectures;
+	select * from questions;
+	select * from answers;

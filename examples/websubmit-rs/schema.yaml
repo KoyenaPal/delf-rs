@@ -1,82 +1,31 @@
 object_type:
-  name: users
-  storage: mysql
-  deletion: directly_only
-  id: email
-  id_type: string
-  edge_types: []
-#     - name: waddup
-#       to:
-#         object_type: answers
-#         field: email
-#       deletion: deep
----
-  object_type:
-    name: answers
-    storage: mysql
-    deletion: directly_only
-#    x:
-#      - users
-    id: email
-    edge_types: []
----
-  object_type:
     name: lectures
-    storage: mysql
-    deletion: directly_only
-    id: id
-    edge_types: []
-#       - name: waddup
-#         to:
-#           object_type: questions
-#           field: lec
-#         deletion: deep
----
-  object_type:
-    name: questions
-    storage: mysql
-    deletion: directly_only
-#    x:
-#     - lectures
-    id: lec_q_id
-    edge_types: []
-      # - name: question_to_answer
-      #   to:
-      #     object_type: answers
-      #     field: questionToAnswerId
-      #   deletion: deep
----
-object_type:
-    name: lectures_test
     storage: mysql
     deletion: directly
     id: id
-#    id_type: string
     edge_types:
        - name: lectToQuestion
          from_id_type: number
          to:
-           object_type: questions_test
+           object_type: questions
            field: lec_id
          deletion: deep
 ---
 object_type:
-    name: questions_test
+    name: questions
     storage: mysql
-    deletion: by_x_only
-    x:
-     - lectToQuestion
+    deletion: directly
     id: q_id
     edge_types:
        - name: questionToAnswers
          from_id_type: number
          to:
-           object_type: answers_test
+           object_type: answers
            field: q_id
          deletion: deep
 ---
 object_type:
-    name: answers_test
+    name: answers
     storage: mysql
     deletion: by_x_only
     x:
@@ -86,7 +35,7 @@ object_type:
     edge_types: []
 ---
 object_type:
-    name: users_test
+    name: users
     storage: mysql
     deletion: directly_only
     id: email
@@ -95,6 +44,6 @@ object_type:
         - name: userToAnswers
           from_id_type: string
           to:
-            object_type: answers_test
+            object_type: answers
             field: u_email
           deletion: deep

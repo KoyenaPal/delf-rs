@@ -4,7 +4,7 @@ object_type:
     deletion: directly
     id: id
     edge_types:
-       - name: lectToQuestion
+       - name: lectureToQuestions
          from_id_type: number
          to:
            object_type: questions

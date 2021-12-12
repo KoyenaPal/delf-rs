@@ -8,21 +8,20 @@ object_type:
          from_id_type: number
          to:
            object_type: questions
-           field: lec
+           field: lec_id
          deletion: deep
 ---
 object_type:
     name: questions
     storage: mysql
     deletion: directly
-    id: lecq
-    id_type: string
+    id: q_id
     edge_types:
        - name: questionToAnswers
-         from_id_type: string
+         from_id_type: number
          to:
            object_type: answers
-           field: lecq
+           field: q_id
          deletion: deep
 ---
 object_type:
@@ -32,8 +31,7 @@ object_type:
     x:
      - questionToAnswers
      - userToAnswers
-    id: email
-    id_type: string
+    id: q_id
     edge_types: []
 ---
 object_type:
@@ -47,5 +45,5 @@ object_type:
           from_id_type: string
           to:
             object_type: answers
-            field: email
+            field: u_email
           deletion: deep

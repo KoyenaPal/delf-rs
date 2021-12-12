@@ -1,6 +1,7 @@
 use yaml_rust::Yaml;
 
 use crate::graph::DelfGraph;
+use std::collections::HashSet;
 
 /// The deletion types for a DelfEdge.  The type describes how the object the edge points to should be deleted by the DelfGraph.
 #[derive(Clone, Debug, PartialEq)]
@@ -121,7 +122,7 @@ impl DelfEdge {
     }
 
     /// Delete all edges of a given type from the instance of the object
-    pub fn delete_all(&self, from_id: &String, from_id_type: &String, graph: &DelfGraph) {
+    pub fn delete_all(&self, from_id: &String, from_id_type: &String, from_id_list: &HashSet<String>, graph: &DelfGraph) {
         let to_obj = graph.get_object(&self.to.object_type);
         let s = &*(graph.storages.get(&to_obj.storage).unwrap());
 
@@ -132,19 +133,35 @@ impl DelfEdge {
 
         match self.deletion {
             DeleteType::Deep => {
-                // collect object ids to delete
-                let to_ids = s.get_object_ids(
-                    from_id,
-                    from_id_type,
-                    &self.to.field,
-                    table,
-                    &to_obj.id_field,
-                    &to_obj.id_type,
-                );
-                for to_id in to_ids.iter() {
-                    graph._delete_object(&to_obj.name, to_id, Some(self));
+                // if  !from_id_list.is_empty() {
+                //     // collect object ids to delete
+                //     let to_ids = s.get_object_ids_by_list(
+                //         from_id_list,
+                //         from_id_type,
+                //         &self.to.field,
+                //         table,
+                //         &to_obj.id_field,
+                //         &to_obj.id_type,
+                //     );
+                //     for to_id in to_ids.iter() {
+                //         graph._delete_object(&to_obj.name, to_id, Some(self));
+                //     }
+                // }
+                // else {
+                    // collect object ids to delete
+                    let to_ids = s.get_object_ids(
+                        from_id,
+                        from_id_type,
+                        &self.to.field,
+                        table,
+                        &to_obj.id_field,
+                        &to_obj.id_type,
+                    );
+                    for to_id in to_ids.iter() {
+                        graph._delete_object(&to_obj.name, to_id, Some(self));
+                    }
                 }
-            }
+            // }
             DeleteType::RefCount => {
                 let to_ids = s.get_object_ids(
                     from_id,

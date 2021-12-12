@@ -121,11 +121,10 @@ impl DelfGraph {
         let obj = self.get_object(object_name);
 
         let deleted = obj.delete(id, from_edge, &self.storages);
-
         if deleted {
             let edges = self.graph.edges_directed(self.nodes[&obj.name], Outgoing);
             for e in edges {
-                e.weight().delete_all(id, &obj.id_type, self);
+                e.weight().delete_all(id, &obj.id_type, &obj.id_list, self);
             }
         }
     }

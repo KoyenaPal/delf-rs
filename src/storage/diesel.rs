@@ -5,6 +5,7 @@ use diesel::sql_types::{BigInt, Integer, Text};
 use diesel::Connection;
 use diesel::QueryableByName;
 use diesel::RunQueryDsl;
+use std::collections::HashSet;
 
 pub use super::DelfStorageConnection;
 use crate::graph::{edge::DelfEdge, object::DelfObject};
@@ -60,8 +61,9 @@ impl DelfStorageConnection for DieselConnection {
             "SELECT {} as id_field FROM {} WHERE {} = ",
             id_field, table, edge_field
         );
+        
         self.append_id_to_query(&mut query_str, from_id_type, from_id);
-
+    
         let query = diesel::sql_query(query_str);
 
         let mut obj_ids = Vec::new();
@@ -121,6 +123,50 @@ impl DelfStorageConnection for DieselConnection {
             _ => panic!("Unrecognized id type"),
         }
 
+        return obj_ids;
+    }
+
+    fn get_object_ids_by_list(
+        &self,
+        from_id_list: &HashSet<String>,
+        from_id_type: &String,
+        edge_field: &String,
+        table: &String,
+        id_field: &String,
+        id_type: &String,
+    ) -> Vec<String> {
+        let mut obj_ids = Vec::new();
+        let mut query_str = format!(
+            "SELECT {} as id_field FROM {} WHERE {} = ",
+            id_field, table, edge_field
+        );
+        let j = from_id_list.len();
+        let mut i = 0;
+        for from_id in from_id_list {
+            self.append_id_to_query(&mut query_str, from_id_type, from_id);
+            if i < j-1 {
+                query_str.push_str(format!(" AND {} = ", from_id).as_str());
+            }
+            i = i+1;
+        }
+        let query = diesel::sql_query(query_str);
+
+        match id_type.to_lowercase().as_str() {
+            "string" => {
+                let res = query.load::<ObjectIdStrResult>(&self.connection).unwrap();
+                for o_id in res {
+                    obj_ids.push(o_id.id_field)
+                }
+            }
+            "number" => {
+                let res = query.load::<ObjectIdIntResult>(&self.connection).unwrap();
+                for o_id in res {
+                    obj_ids.push(o_id.id_field.to_string())
+                }
+            }
+            _ => panic!("Unrecognized id type"),
+        }
+              
         return obj_ids;
     }
 

@@ -49,6 +49,7 @@ pub struct DelfObject {
     pub storage: String,
     pub deletion: DeleteType,
     pub id_field: String,
+    pub id_list: HashSet<String>,
     pub id_type: String,
     pub time_field: Option<String>,
 }
@@ -56,10 +57,15 @@ pub struct DelfObject {
 impl From<&Yaml> for DelfObject {
     /// Construct a DelfObject from yaml.  The keys `name`, `storage`, `id_field`, and `deletion` are required.  `id_type can be specified as `string`, but otherwise defaults to `number`.  The the `deletion` is `short_ttl`, `time_field` is also required.
     fn from(obj: &Yaml) -> DelfObject {
+        let mut x = HashSet::new();
+        // for id_str in obj["id_list"].as_vec().unwrap().iter() {
+        //     x.insert(String::from(id_str.as_str().unwrap()));
+        // }
         DelfObject {
             name: String::from(obj["name"].as_str().unwrap()),
             storage: String::from(obj["storage"].as_str().unwrap()),
             id_field: String::from(obj["id"].as_str().unwrap()),
+            id_list: x,
             id_type: match obj["id_type"].as_str() {
                 Some(t) => t.to_string(),
                 None => "number".to_string(),

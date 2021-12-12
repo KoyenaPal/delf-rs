@@ -1,6 +1,7 @@
 use std::fmt::Debug;
 
 use crate::graph::{edge::DelfEdge, object::DelfObject};
+use std::collections::HashSet;
 
 mod diesel;
 
@@ -30,6 +31,17 @@ pub trait DelfStorageConnection: Debug {
         id_field: &String,
         id_type: &String,
     ) -> Vec<String>;
+
+    fn get_object_ids_by_list(
+        &self,
+        from_id_list: &HashSet<String>,
+        from_id_type: &String,
+        edge_field: &String,
+        table: &String,
+        id_list: &String,
+        id_type: &String,
+    ) -> Vec<String>;
+    
 
     /// Delete an edge instance.
     fn delete_edge(

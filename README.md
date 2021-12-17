@@ -1,9 +1,5 @@
 # Applying Delf-rs to Web Submission System
 
-[![Docs](https://img.shields.io/badge/docs-stable-blue.svg)](https://mcmcgrath13.github.io/delf-rs/delf/index.html)
-
-A [DelF](https://cs.brown.edu/courses/csci2390/2020/readings/delf.pdf) inspired deletion framework in Rust.
-
 delf-rs (the framework from which we forked from) is a lighter weight deletion framework that resembles Meta's DelF. The original DelF is a deletion framework created at Facebook, which aims to robustly delete all related data from its data stores as defined by the `deletion` definitions added to Facebook's existing data definition language (DDL).
 
 ## Running the code

@@ -33,14 +33,14 @@ Validate the websubmit schema
 ./target/debug/delf -s examples/websubmit-rs/schema.yaml -c examples/websubmit-rs/config.yaml validate
 ```
 
-Run the API
+### Run the API
 
 ```
 ./target/debug/delf -s examples/websubmit-rs/schema.yaml -c examples/websubmit-rs/config.yaml run
 
 ```
 
-Sample deletion requests:
+### Sample deletion requests:
 
 After deleting the following lecture object, all the related data rows in lectures, questions, and answers table will be deleted.
 

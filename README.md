@@ -1,6 +1,6 @@
 # Applying Delf-rs to Web Submission System
 
-delf-rs (the framework from which we forked from) is a lighter weight deletion framework that resembles Meta's DelF. The original DelF is a deletion framework created at Facebook, which aims to robustly delete all related data from its data stores as defined by the `deletion` definitions added to Facebook's existing data definition language (DDL).
+Delf-rs (the framework from which we forked from) is a lighter weight deletion framework that resembles Meta's DelF. The original DelF is a deletion framework created at Facebook, which aims to robustly delete all related data from its data stores as defined by the `deletion` definitions added to Facebook's existing data definition language (DDL).
 
 ## Running the code
 

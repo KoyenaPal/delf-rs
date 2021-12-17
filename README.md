@@ -1,100 +1,26 @@
-# delf-rs
+# Applying Delf-rs to Web Submission System
 
 [![Docs](https://img.shields.io/badge/docs-stable-blue.svg)](https://mcmcgrath13.github.io/delf-rs/delf/index.html)
 
 A [DelF](https://cs.brown.edu/courses/csci2390/2020/readings/delf.pdf) inspired deletion framework in Rust.
 
-The original DelF is a deletion framework created at Facebook, which aims to robustly delete all related data from its data stores as defined by the `deletion` definitions added to Facebook's existing data definition language (DDL). It includes logging, data recovery in case of unintended deletion, asynchronous execution, dynamic analysis, and retries deletions until complete in addition to the features this implementation includes.
-
-delf-rs aims to be a lighter weight deletion framework, without the need for Facebook's infrastructure stack. The following features are included in the scope of this work.
-
-
-![DelF Architecture Diagram](docs/delf.png)
-
-### REST API
-
-> **:warning: STATUS: Mostly Complete**  
-> - [x] Set up rockets routes
-> - [x] Package crate
-> - [ ] Tests
-> - [x] Documentation
-
-The primary interaction point of delf-rs is a rest API with `DELETE` routes that the main application can make requests to. This can be either an object with an ID, or an edge with its to and from IDs.
-
-### Schema Validation
-
-> **:warning: STATUS: Mostly Complete**  
-> - [x] Read in YAML to Graph
-> - [x] Error handling for invalid ddl yaml
-> - [x] Validate schema against DB
-> - [x] Static Analysis (stretch goal)
-> - [ ] Tests
-> - [x] Documentation
-
-Inspired by Facebook's DDL, this project has created a smaller version of the DDL which includes on the fields needed for deletions to be correctly done. It consists of `object_types`, which have a list of `edge_types` as one of the attributes of the object. This schema is a yaml file, which is loaded into the delf-rs runtime to create the graph. It can also be validated against the configured databases to ensure all of the objects/edges exist as described. Static analysis can also be run on the schema to find common errors.
-
-### Deletion Graph
-
-> **:warning: STATUS: Mostly Complete**  
-> - [x] Create data structures / enums for deletion types
-> - [x] Implement algorithm for traversing the graph
->   - [x] Implement all edge deletion types (3/3 complete)
->   - [x] Implement all object deletion types (6/6 complete)
-> - [x] Adjust algorithm to dispatch deletions to database
-> - [ ] Tests
-> - [x] Documentation
-
-The deletion graph is the core data structure backing delf. It contains the relationships between entities as well as how they are connected by edges and how they many be deleted.  The same deletion types have been used as in the original DelF.
-
-### Storage Connectors
-
-> **:warning: STATUS: Partially Complete**  
-> - [x] Create trait for DelfStorage
-> - [ ] Create plugins for databases:
->   - [x] mysql (using diesel, hope to be able to easily also support postgres and sqlite)
->   - [ ] mongo
->   - [ ] neo4j
-> - [ ] Tests
-> - [x] Documentation
-
-delf-rs can connect to a variety of databases and can delete objects/edges across systems. Each database is implemented with a common api, so they are pluggable and can be extended to any database as long as there is a way to delete objects and edges as defined in the ddl. Additionally the database connectors are used to validate the yaml schema reflects what is implemented on the system.
-
-### CLI
-
-> **:warning: STATUS: Mostly complete**  
-> - [x] Set up cli methods
->   - [x] Validate
->   - [x] Run
-> - [ ] package
-> - [ ] Tests
-> - [x] Documentation
-
-A cli is useful for running the validation of the schema as well as the static analysis. These can both be run without the API, but do require the other components of delf-rs.
-
-### Example
-
-> **:warning: STATUS: Mostly complete**  
-> - [x] Dockerize application
-> - [x] Load test data
-> - [x] Create delf schema (partially complete)
-> - [x] Create delf config (not secure, but working)
-> - [ ] Replace deletion in app with delf (stretch)
-
-HotCRP is open source conference management software. It is being used as an example to run delf-rs on.  The storage used is a mysql database, which has been dockerized to make testing/reproducibility easier for delf-rs.
+delf-rs (the framework from which we forked from) is a lighter weight deletion framework that resembles Meta's DelF. The original DelF is a deletion framework created at Facebook, which aims to robustly delete all related data from its data stores as defined by the `deletion` definitions added to Facebook's existing data definition language (DDL).
 
 ## Running the code
 
 ### Prerequisites
 
 * Rust
-* Docker
+* MySQL
 
-### Storage
+### Get Data
 
-Docker container with fake data can be found at https://github.com/mcmcgrath13/hotcrp/.
+Step 1: Create a database named `myclass`. Instructions on how to do so can be viewed here: https://www.mysqltutorial.org/mysql-create-database/
+
+Step 2: Import sample dataset by executing the following command. Note, `<username>` should be replaced with the user that has access to the `myclass` database. When we ran our code, our `<username>` was `root`.
 
 ```
-docker-compose up -d
+mysql -u <username> -p myclass < data.txt
 ```
 
 ### Delf
@@ -105,33 +31,32 @@ Build the executable:
 cargo build
 ```
 
-Validate the hotcrp schema (error version and working version)
+Validate the websubmit schema
 
 ```
-./target/debug/delf -s examples/hotcrp/schema_errors.yaml -c examples/hotcrp/config.yaml validate
-```
-
-```
-./target/debug/delf -s examples/hotcrp/schema.yaml -c examples/hotcrp/config.yaml validate
+./target/debug/delf -s examples/websubmit-rs/schema.yaml -c examples/websubmit-rs/config.yaml validate
 ```
 
 Run the API
 
 ```
-./target/debug/delf -s examples/hotcrp/schema.yaml -c examples/hotcrp/config.yaml run
+./target/debug/delf -s examples/websubmit-rs/schema.yaml -c examples/websubmit-rs/config.yaml run
+
 ```
 
 Sample deletion requests:
 
-After deleting these three ContactInfo objects, the Paper with paperID 10 will be deleted.
+After deleting the following lecture object, all the related data rows in lectures, questions, and answers table will be deleted.
+
 ```
-curl -X "DELETE" http://localhost:8000/object/ContactInfo/11
-curl -X "DELETE" http://localhost:8000/object/ContactInfo/12
-curl -X "DELETE" http://localhost:8000/object/ContactInfo/13
+curl -X "DELETE" http://localhost:8000/object/lectures/1
 
 ```
 
-Delete the paper conflict of ContactInfo with ID 4 and Paper with ID 1
+To test another object deletion, you can restore the data by repeating the steps in the "Get Data" section.
+
+After deleting the following users object, all the related data rows in users and answers table will be deleted.
+
 ```
-curl -X "DELETE" http://localhost:8000/edge/conflict_contact_id/4/1
+curl -X "DELETE" http://localhost:8000/object/users/kate_nelson@brown.edu
 ```
